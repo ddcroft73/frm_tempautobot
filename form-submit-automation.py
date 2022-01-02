@@ -42,42 +42,41 @@ def start_bot(headless: bool=False) -> None:
     return driver
     
 # wait_and_find() function attmepts to wait for each element passed in before acessing it, you can adjust 
-# the times for some timeouts. Some my stil time out but compared to not using WebDriverWait()
-# before sending or clicking it seems to work much better.
+# the times for each element, but i find higher is more forgiving.
 #
 # delay:      The amount of time to wait for the element to load. Driver will wait this amount of time
-#             fore the element to load or will execute if it loads before. I keep them at  10. 
+#             for the element to load or will execute if it loads before. I keep them at  10. 
 #             It seems to work better if I allow extra time before an action is executed.
-# doing:      The action being sent to the find_element() method. These actions can be added to the 
-#             match case if needed and defined as if youd call the method directly. FoOr our purposees:
-#             "send" send skeystroke to an element.
+# doing:      The action being sent to the find_element() method. More actions may be added to the 
+#             switch case if needed and defined same as if you called the method directly. For my purposees:
+#             "send" send keystroke to an element.
 #             "click" sends a click event to the element.
-#             "query"  calls find_element and returns an object.
-# by_target:  This is the string passed in referenced fFrom the By object. FOr our purposes we are using
-#             By.XPATH, and By.LINK_TEXT, but there are others you can utilize to access the element as well.
+#             "get"  calls find_element and returns an object so the properties may be accessed.
+# by_target:  This is the string passed in referenced from the By object. FOr my purposes I'm  using
+#             By.XPATH, and By.LINK_TEXT, but there are others you can use to access any element as well.
 # elements_target:    This is that actual string data gotten from the webpage previous;y using inspect that
 #                     identifies the element.
-# send_data:  This is an otiona argument that is aonly used when sendinf keys to an element.
+# send_data:  This is an otional argument that is only used when sending keystrokes to an element.
 # 
-# returns:    An object from find_element that can be used to get the elements text as well as other things 
+# returns:    An object from find_element that can be used to get the elements text as well as other properties 
 #             such as an attribute.               
 #
 def wait_and_find(delay: int, doing: str,  by_target: str, elements_target: str, send_data: str=None) -> str:
     result: str=None 
     WebDriverWait(drv, delay).until(EC.presence_of_element_located((by_target, elements_target)))
-
+    # decide what is being done.
     match doing:
         case "send":
             drv.find_element(by_target, elements_target).send_keys(send_data)
         case "click":
             result = drv.find_element(by_target, elements_target).click()
-        case "query":
+        case "get":
             result = drv.find_element(by_target, elements_target)
     return result      
 
 
 # load the data to run the site into a dictionary so the values can be accessed
-# directly and easily  updated all in one place.   
+# directly and easily updated all in one place.   
 def get_userdata() -> dict:
     with open(PAYLOAD, "r") as infile:
         data = json.load(infile)
@@ -85,69 +84,81 @@ def get_userdata() -> dict:
 
 
 #
-# FUNCTIONS TO SUBMIT AND\OR QUERY FORM DATA -
+# FUNCTIONS TO SUBMIT AND\OR access FORM\PAGE DATA -
 # 
-#   This is just examole data to mimic what you way\should find when accessing page elements. For a better
+#   This is just  example data to mimic what you way\should find when accessing page elements. 
+#   THis script will not run as is. You must personalixe it to your needs. For a better
 #   Description of how to obtain this data see readme.md
 #   For this tutorial I am accessing the elements by XPATH, You can also access them by 
-#   LINK_TEXT, TAG_NAME, CLASS, ID etc. Examples of each are given.
+#   LINK_TEXT, TAG_NAME, CLASS_NAME, ID etc. 
 # 
 #    
-def login() -> str:
-    # this is the target of the element you cpoioed form the inspect window in your browser.
+def login() -> None:
+    # this is the target of the element you copied form the inspect window in your browser.
     # name the variable appropriatly and paste the data to it.
-    userid_xpath = '//*[@id="userid"]'
-    user_pword = '//*[@id="password"]'
-    page_data = 'target to page data'
-    submit_xpath = "/html/body/div/div/div/section/div[1]/div[2]/div/form/div[6]/div/button"
+    userid_xpath = '//*[@id="userid"]' # example of what XPATH data may look like
+    user_pword_xpath = '//*[@id="password"]'
+    page_data_xpath = 'target to page data'
+    # XPATH data can also look like:
+    submit_button_xpath = "/html/body/div/div/div/section/div[1]/div[2]/div/form/div[6]/div/button"
     
     # This function call is saying:
-    # wait for X seconds before "action" by method, data to send if applicable
+    # wait for X seconds before "action" by method, and send data if applicable
+    # You eill access the data to send in the json like data['keyName')
     # 
-    #  send the User Id name By."method" to the element
     wait_and_find(10, 'send', By.XPATH, userid_xpath, data['userid'])   
-    wait_and_find(10, 'send', By.XPATH, user_pword, data['password'])
+    wait_and_find(10, 'send', By.XPATH, user_pword_xpath, data['password'])
     # you can also send an event by the text of the link to click a known link
     wait_and_find(10, 'click', By.LINK_TEXT, data['my_link_text'])
 
-    # sends a clic event to the buttons target and submits the data
-    wait_and_find(10, 'click', By.XPATH, submit_xpath)
+    # sends a clic event to the buttons target and submits the form
+    # you can now move your focus to another function defined to handle 
+    # another page or the data that is laoded after the submit
+    wait_and_find(10, 'click', By.XPATH, submit_button_xpath)
     
     # YOu can be creative here and do more if you need
-    # You can query an element for an attribute using this syntax to get
-    # the text that comes back    
-    result = wait_and_find(3, 'query', By.XPATH, page_data)
+    # You can query an element for it's text using this syntax
+    
+    result = wait_and_find(3, 'get', By.XPATH, page_data_xpath)
     print(result.text)
 
 
-# another exampl with out any comments
-def submit_user_info() -> None:
-    address_xpath = '//*[@id="CustomerInfo_Address1"]'
-    city_xpath = '//*[@id="CustomerInfo_City"]'
-    state_xpath = '//*[@id="CustomerInfo_State"]'
-    zip_xpath = '//*[@id="CustomerInfo_Zip"]'
-    phone_xpath = '//*[@id="Phone"]'
-    email_xpath = '//*[@id="Email"]'
-    link_text = "The text for a link..."
-    next_button_xpath = '//*[@id="bntNextCustomerInfo"]'
-    
+# another exampl with out many comments and witht the element identifier
+# above the method call
+def submit_user_info() -> None:    
     # the target you use doesnt always have to be XPATH, but make sure
-    # the method by which you identify mathes the part of the element you want.
+    # the method by which you identify matches the part of the element you want.
+    address_xpath = '//*[@id="CustomerInfo_Address1"]'
     wait_and_find(10, 'send', By.XPATH, address_xpath, data['address'])  
-    wait_and_find(10, 'send', By.CLASS_NAME, city_xpath, data['city'])
-    wait_and_find(10, 'send', By.TAG_NAME, zip_xpath, data['zip'])
-    wait_and_find(10, 'send', By.ID, phone_xpath, data['phone'])
-    wait_and_find(10, 'send', By.LINK_TEXT, email_xpath, data['email'])
-    wait_and_find(10, 'send', By.XPATH, state_xpath, data['state']) 
+    
+    city_class_name = "city_class name"    
+    wait_and_find(10, 'send', By.CLASS_NAME, city_class_name, data['city'])
+    
+    zip_tagname = "zipTagname"    
+    wait_and_find(10, 'send', By.TAG_NAME, zip_tagname, data['zip'])
+    
+    phone_ID = "PhoneID"    
+    wait_and_find(10, 'send', By.ID, phone_ID, data['phone'])
+    
+    state_xpath = '//*[@id="CustomerInfo_State"]'              
+    wait_and_find(10, 'send', By.XPATH, state_xpath, data['state'])
+    
+    # clicking on link by link text
+    link_text = "The text for a link..."
+    wait_and_find(10, 'click', By.LINK_TEXT, link_text)    
+    # clicking on link by The first word in the link textt
+    wait_and_find(10, 'click', By.PARTIAL_LINK_TEXT, link_text.split()[0]         
 
-    # return an atribute of an element
-    link = wait_and_find(3, 'query', By.LINK_TEXT, link_text)
+    # return an atribute of an element by the link text
+    link = wait_and_find(3, 'get', By.LINK_TEXT, link_text)
     the_link = link.get_attribute('href') 
-
+    
+    # click the button to submit the form.
+    next_button_xpath = '//*[@id="bntNextCustomerInfo"]'
     wait_and_find(10, 'click', By.XPATH, next_button_xpath)   
 
 
-#  Define more functions to get\access\manipulate dynamic data and then re  submot it 
+#  Define more functions to get\access\manipulate dynamic data and then re submot it. 
 #  more data as needed... You can acces links and crawl them\request data and parse\scrape it as well.
 
 
