@@ -7,9 +7,9 @@
     "city": "city",
     "state": "state",
     "zip": "zip",
-    "my_link_text": "access the ling that has this text",
+    "my_link_text": "access the link that has this text",
     "payment_amt": "1.0",
     "start_url":  "https://www.starting_url_for_automation.com"
 
-}   // etc, etc. As long as no one has access to your computer your 
+}   // etc, etc.
     
