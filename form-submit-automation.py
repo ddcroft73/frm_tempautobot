@@ -69,7 +69,7 @@ def wait_and_find(delay: int, doing: str,  by_target: str, elements_target: str,
         case "send":
             drv.find_element(by_target, elements_target).send_keys(send_data)
         case "click":
-            result = drv.find_element(by_target, elements_target).click()
+            drv.find_element(by_target, elements_target).click()
         case "get":
             result = drv.find_element(by_target, elements_target)
     return result      
