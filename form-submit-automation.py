@@ -147,7 +147,7 @@ def submit_user_info() -> None:
     link_text = "The text for a link..."
     wait_and_find(10, 'click', By.LINK_TEXT, link_text)    
     # clicking on link by The first word in the link textt
-    wait_and_find(10, 'click', By.PARTIAL_LINK_TEXT, link_text.split()[0]         
+    wait_and_find(10, 'click', By.PARTIAL_LINK_TEXT, link_text.split()[0])         
 
     # return an atribute of an element by the link text
     link = wait_and_find(3, 'get', By.LINK_TEXT, link_text)
