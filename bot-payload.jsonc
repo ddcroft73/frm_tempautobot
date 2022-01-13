@@ -1,6 +1,8 @@
 {
     // Keep all the data you need use to submit a form or form(s)
     // out of your code so you can access it quicker and make changes as needed.
+    // Remove the comments and change the extension to .json before 
+    // Running 
     "userid": "userid",
     "password": "password",
     "address": "address",
