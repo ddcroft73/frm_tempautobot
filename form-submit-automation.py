@@ -9,7 +9,7 @@ from selenium.webdriver.support.ui import WebDriverWait            # Waits for t
 from selenium.webdriver.support import expected_conditions as EC   # the condition the driver is set to wait for.
 from selenium.webdriver.common.by import By                        # a string object that issues the type of element being accessed
 
-PAYLOAD = "./bot-payload.jsonc"                                    # The file that contains all the data used to for the form submisssion(s)
+PAYLOAD = "./bot-payload.json"                                    # The file that contains all the data used to for the form submisssion(s)
 
 
 # THis function initializes and sets up the options for the webdriver
